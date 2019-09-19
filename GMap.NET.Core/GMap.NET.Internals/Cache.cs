@@ -15,7 +15,7 @@ namespace GMap.NET.Internals
       {
          get
          {
-            if(string.IsNullOrEmpty(location))
+            if (string.IsNullOrEmpty(location))
             {
                Reset();
             }
@@ -24,7 +24,7 @@ namespace GMap.NET.Internals
          }
          set
          {
-            if(string.IsNullOrEmpty(value)) // setting to null resets to default
+            if (string.IsNullOrEmpty(value)) // setting to null resets to default
             {
                Reset();
             }
@@ -33,7 +33,7 @@ namespace GMap.NET.Internals
                location = value;
             }
 
-            if(Delay)
+            if (Delay)
             {
                Cache.Instance.CacheLocation = location;
             }
@@ -41,13 +41,13 @@ namespace GMap.NET.Internals
       }
 
       static void Reset()
-      {    
+      {
          string appDataLocation = GetApplicationDataFolderPath();
 
 #if !PocketPC
          // http://greatmaps.codeplex.com/discussions/403151
          // by default Network Service don't have disk write access
-         if(string.IsNullOrEmpty(appDataLocation)) 
+         if (string.IsNullOrEmpty(appDataLocation))
          {
             GMaps.Instance.Mode = AccessMode.ServerOnly;
             GMaps.Instance.UseDirectionsCache = false;
@@ -69,15 +69,15 @@ namespace GMap.NET.Internals
          bool isSystem = false;
          try
          {
-            using(var identity = System.Security.Principal.WindowsIdentity.GetCurrent())
+            using (var identity = System.Security.Principal.WindowsIdentity.GetCurrent())
             {
-               if(identity != null)
+               if (identity != null)
                {
                   isSystem = identity.IsSystem;
                }
             }
          }
-         catch(Exception ex)
+         catch (Exception ex)
          {
             Trace.WriteLine("SQLitePureImageCache, WindowsIdentity.GetCurrent: " + ex);
          }
@@ -85,7 +85,7 @@ namespace GMap.NET.Internals
          string path = string.Empty;
 
          // https://greatmaps.codeplex.com/workitem/16112
-         if(isSystem)
+         if (isSystem)
          {
             path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.CommonApplicationData);
          }
@@ -97,7 +97,7 @@ namespace GMap.NET.Internals
          path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
 #endif
 
-         if(!string.IsNullOrEmpty(path))
+         if (!string.IsNullOrEmpty(path))
          {
             path += Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
          }
@@ -137,17 +137,12 @@ namespace GMap.NET.Internals
          set
          {
             cache = value;
-#if SQLite
-            if(ImageCache is SQLitePureImageCache)
+
+            if (ImageCache is SQLitePureImageCache)
             {
                (ImageCache as SQLitePureImageCache).CacheLocation = value;
             }
-#else
-            if(ImageCache is MsSQLCePureImageCache)
-            {
-               (ImageCache as MsSQLCePureImageCache).CacheLocation = value;
-            }
-#endif
+
             CacheLocator.Delay = true;
          }
       }
@@ -155,62 +150,42 @@ namespace GMap.NET.Internals
       public Cache()
       {
          #region singleton check
-         if(Instance != null)
+         if (Instance != null)
          {
             throw (new System.Exception("You have tried to create a new singleton class where you should have instanced it. Replace your \"new class()\" with \"class.Instance\""));
          }
          #endregion
 
-#if SQLite
          ImageCache = new SQLitePureImageCache();
-#else
-         // you can use $ms stuff if you like too ;}
-         ImageCache = new MsSQLCePureImageCache();
-#endif
 
-#if PocketPC
-         // use sd card if exist for cache
-         string sd = Native.GetRemovableStorageDirectory();
-         if(!string.IsNullOrEmpty(sd))
+         string newCache = CacheLocator.Location;
+
+         string oldCache = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
+
+         // move database to non-roaming user directory
+         if (Directory.Exists(oldCache))
          {
-            CacheLocation = sd + Path.DirectorySeparatorChar +  "GMap.NET" + Path.DirectorySeparatorChar;
-         }
-         else
-#endif
-         {
-#if PocketPC
-            CacheLocation = CacheLocator.Location;
-#else
-            string newCache = CacheLocator.Location;
-
-            string oldCache = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + "GMap.NET" + Path.DirectorySeparatorChar;
-
-            // move database to non-roaming user directory
-            if(Directory.Exists(oldCache))
+            try
             {
-               try
+               if (Directory.Exists(newCache))
                {
-                  if(Directory.Exists(newCache))
-                  {
-                     Directory.Delete(oldCache, true);
-                  }
-                  else
-                  {
-                     Directory.Move(oldCache, newCache);
-                  }
-                  CacheLocation = newCache;
+                  Directory.Delete(oldCache, true);
                }
-               catch(Exception ex)
+               else
                {
-                  CacheLocation = oldCache;
-                  Trace.WriteLine("SQLitePureImageCache, moving data: " + ex.ToString());
+                  Directory.Move(oldCache, newCache);
                }
-            }
-            else
-            {
                CacheLocation = newCache;
             }
-#endif
+            catch (Exception ex)
+            {
+               CacheLocation = oldCache;
+               Trace.WriteLine("SQLitePureImageCache, moving data: " + ex.ToString());
+            }
+         }
+         else
+         {
+            CacheLocation = newCache;
          }
       }
 
@@ -220,7 +195,7 @@ namespace GMap.NET.Internals
 
       void ConvertToHash(ref string s)
       {
-          s = BitConverter.ToString(HashProvider.ComputeHash(Encoding.Unicode.GetBytes(s)));
+         s = BitConverter.ToString(HashProvider.ComputeHash(Encoding.Unicode.GetBytes(s)));
       }
 
       public void SaveContent(string url, CacheType type, string content)
@@ -232,19 +207,19 @@ namespace GMap.NET.Internals
             string dir = Path.Combine(cache, type.ToString()) + Path.DirectorySeparatorChar;
 
             // precrete dir
-            if(!Directory.Exists(dir))
+            if (!Directory.Exists(dir))
             {
                Directory.CreateDirectory(dir);
             }
 
             string file = dir + url + ".txt";
 
-            using(StreamWriter writer = new StreamWriter(file, false, Encoding.UTF8))
+            using (StreamWriter writer = new StreamWriter(file, false, Encoding.UTF8))
             {
                writer.Write(content);
             }
          }
-         catch(Exception ex)
+         catch (Exception ex)
          {
             Debug.WriteLine("SaveContent: " + ex);
          }
@@ -261,23 +236,23 @@ namespace GMap.NET.Internals
             string dir = Path.Combine(cache, type.ToString()) + Path.DirectorySeparatorChar;
             string file = dir + url + ".txt";
 
-            if(File.Exists(file))
+            if (File.Exists(file))
             {
                var writeTime = File.GetLastWriteTime(file);
                if (DateTime.Now - writeTime < stayInCache)
                {
-                   using (StreamReader r = new StreamReader(file, Encoding.UTF8))
-                   {
-                       ret = r.ReadToEnd();
-                   }
+                  using (StreamReader r = new StreamReader(file, Encoding.UTF8))
+                  {
+                     ret = r.ReadToEnd();
+                  }
                }
                else
                {
-                   File.Delete(file);
+                  File.Delete(file);
                }
             }
          }
-         catch(Exception ex)
+         catch (Exception ex)
          {
             ret = null;
             Debug.WriteLine("GetContent: " + ex);
