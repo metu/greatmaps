@@ -1,0 +1,71 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Repos\\Gmaps\\greatmaps\\GMap.NET\\GMap.NET.Core\\GMap.NET.Core.csproj": {}
+  },
+  "projects": {
+    "C:\\Repos\\Gmaps\\greatmaps\\GMap.NET\\GMap.NET.Core\\GMap.NET.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Repos\\Gmaps\\greatmaps\\GMap.NET\\GMap.NET.Core\\GMap.NET.Core.csproj",
+        "projectName": "GMap.NET.Core",
+        "projectPath": "C:\\Repos\\Gmaps\\greatmaps\\GMap.NET\\GMap.NET.Core\\GMap.NET.Core.csproj",
+        "packagesPath": "C:\\Users\\c0900707\\.nuget\\packages\\",
+        "outputPath": "C:\\Repos\\Gmaps\\greatmaps\\GMap.NET\\GMap.NET.Core\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\c0900707\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Repos\\LocalPackages": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://pkgs.dev.azure.com/TPW-ITIH/_packaging/Internal-symbols/nuget/v3/index.json": {},
+          "https://pkgs.dev.azure.com/TPW-ITIH/_packaging/Internal/nuget/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.0": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netstandard2.0": {
+          "dependencies": {
+            "Microsoft.Data.SQLite": {
+              "target": "Package",
+              "version": "[2.2.6, )"
+            },
+            "NETStandard.Library": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.0.3, )",
+              "autoReferenced": true
+            },
+            "System.Security.Principal.Windows": {
+              "target": "Package",
+              "version": "[4.5.1, )"
+            }
+          },
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
+        }
+      }
+    }
+  }
+}
